@@ -1,8 +1,26 @@
 import React, { Component } from 'react';
 
+import Task from 'components/Task';
+import Checkbox from 'theme/assets/Checkbox';
+
 import Styles from './styles.m.css';
+import Tasks from './tasks';
 
 export default class Scheduler extends Component {
+    state = {
+        tasks: [],
+    };
+
+    accumulateTasks (tasks) {
+        return tasks.map(({ id, completed, message }) => (
+            <Task
+                completed = { completed }
+                key = { id }
+                message = { message }
+            />
+        ));
+    }
+
     render () {
         return (
             <section className = { Styles.scheduler }>
@@ -17,12 +35,13 @@ export default class Scheduler extends Component {
                             <button>Create</button>
                         </form>
                         <ul>
-                            <li>First Task</li>
-                            <li>Second Task</li>
+                            {this.accumulateTasks(Tasks.tasks)}
                         </ul>
                     </section>
                     <footer>
-                        <div></div>
+                        <div>
+                            <Checkbox />
+                        </div>
                         <span>Complete all tasks</span>
                     </footer>
                 </main>
