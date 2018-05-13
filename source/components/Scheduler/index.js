@@ -2,21 +2,47 @@ import React, { Component } from 'react';
 
 import Task from 'components/Task';
 import Checkbox from 'theme/assets/Checkbox';
+import { withApi } from "../HoK/withApi";
 
 import Styles from './styles.m.css';
-import Tasks from './tasks';
 
+@withApi
 export default class Scheduler extends Component {
-    state = {
-        tasks: [],
-    };
+    constructor () {
+        super();
 
-    accumulateTasks (tasks) {
-        return tasks.map(({ id, completed, message }) => (
+        this._handleSubmit = this._handleSubmit.bind(this);
+    }
+
+    _handleSubmit (e) {
+        e.preventDefault();
+
+        const message = e.target.taskMessage.value;
+
+        if (!message) {
+            return;
+        }
+
+        const { createTask } = this.props;
+        createTask(message);
+    }
+
+    accumulateTasks () {
+        const {
+            removeTask,
+            tasks,
+            updateTask,
+        } = this.props;
+
+        return tasks.map(({ id, completed, favorite, message }) => (
             <Task
                 completed = { completed }
+                favorite = { favorite }
+                id = { id }
                 key = { id }
                 message = { message }
+                removeTask = { removeTask }
+                updateTask = { updateTask }
             />
         ));
     }
@@ -27,15 +53,15 @@ export default class Scheduler extends Component {
                 <main>
                     <header>
                         <h1>Task Scheduler</h1>
-                        <input type = 'text' />
+                        <input placeholder = 'Search' type = 'text' />
                     </header>
                     <section>
-                        <form>
-                            <input type = 'text' />
-                            <button>Create</button>
+                        <form onSubmit = { this._handleSubmit }>
+                            <input name = 'taskMessage' placeholder = 'Describe new task' type = 'text' />
+                            <button>Create Task</button>
                         </form>
                         <ul>
-                            {this.accumulateTasks(Tasks.tasks)}
+                            {this.accumulateTasks()}
                         </ul>
                     </section>
                     <footer>

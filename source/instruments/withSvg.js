@@ -16,7 +16,7 @@ const decorateSvg = (
         };
 
         static defaultProps = {
-            color1: '#f00',
+            color1: '#3b8ef3',
             width,
             height,
         };

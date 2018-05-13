@@ -1,2 +1,7 @@
-export const url = 'https://lab.lectrum.io/hw/todo/api';
-export const token = 'tOvQ23cgF7ytxuhCWnPhhQ';
+const url = 'https://lab.lectrum.io/hw/todo/api';
+const token = '74xxLPAicTW0rPAP';
+
+export {
+    url,
+    token
+};

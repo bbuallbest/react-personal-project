@@ -5,6 +5,11 @@ import React, { Component } from 'react';
 import { withSvg } from 'instruments/withSvg';
 
 class Checkbox extends Component {
+    static defaultProps = {
+        color1:  '#3b8ef3',
+        color2:  '#fff',
+    };
+
     render () {
         const { checked, color1, color2 } = this.props;
 
