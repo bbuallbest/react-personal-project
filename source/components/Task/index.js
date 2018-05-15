@@ -26,6 +26,8 @@ export default class Task extends Component {
         this._finishChangesHandler = this._finishChangesHandler.bind(this);
         this._applyChanges = this._applyChanges.bind(this);
         this._skipChanges = this._skipChanges.bind(this);
+
+        this.messageInput = React.createRef();
     }
 
     _completeHandler (e) {
@@ -87,7 +89,11 @@ export default class Task extends Component {
 
         this.setState((prevState) => ({
             inEditMode: !prevState.inEditMode,
-        }));
+        }), () => {
+            if (this.state.inEditMode) {
+                this.messageInput.current.focus();
+            }
+        });
     }
 
     _removeHandler (e) {
@@ -178,6 +184,7 @@ export default class Task extends Component {
                     <input
                         disabled = { !inEditMode }
                         maxLength = '50'
+                        ref = { this.messageInput }
                         type = 'text'
                         value = { message }
                         onChange = { this._messageChangeHandler }
