@@ -7,27 +7,41 @@ import Remove from 'theme/assets/Remove';
 
 import Styles from './styles.m.css';
 
+import { ENTER, ESCAPE } from 'instruments/keyCodes';
+
 export default class Task extends Component {
-    constructor () {
-        super();
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            message:    this.props.message,
+            inEditMode: false,
+        };
 
         this._completeHandler = this._completeHandler.bind(this);
         this._favoriteHandler = this._favoriteHandler.bind(this);
         this._removeHandler = this._removeHandler.bind(this);
         this._editHandler = this._editHandler.bind(this);
-    }
-
-    state = {
-        message:    '',
-        inEditMode: false,
+        this._messageChangeHandler = this._messageChangeHandler.bind(this);
+        this._finishChangesHandler = this._finishChangesHandler.bind(this);
+        this._applyChanges = this._applyChanges.bind(this);
+        this._skipChanges = this._skipChanges.bind(this);
     }
 
     _completeHandler (e) {
         e.preventDefault();
 
         const {
-            id,
             message,
+            inEditMode,
+        } = this.state;
+
+        if (inEditMode) {
+            return;
+        }
+
+        const {
+            id,
             completed,
             favorite,
             updateTask,
@@ -44,14 +58,17 @@ export default class Task extends Component {
     _favoriteHandler (e) {
         e.preventDefault();
 
-        const { inEditMode } = this.state;
+        const {
+            message,
+            inEditMode,
+        } = this.state;
+
         if (inEditMode) {
             return;
         }
 
         const {
             id,
-            message,
             completed,
             favorite,
             updateTask,
@@ -88,15 +105,64 @@ export default class Task extends Component {
     _messageChangeHandler (e) {
         e.preventDefault();
 
+        this.setState({
+            message: e.target.value,
+        });
+    }
 
+    _finishChangesHandler (e) {
+        const keyCode = e.charCode;
+
+        if (keyCode === 13) {
+            this._applyChanges();
+        } else if (keyCode === 27) {
+            this._skipChanges();
+        }
+    }
+
+    _skipChanges () {
+        const {
+            message,
+        } = this.props;
+
+        this.setState(({ inEditMode }) => ({
+            message,
+            inEditMode: !inEditMode,
+        }));
+    }
+
+    _applyChanges () {
+        const {
+            message,
+        } = this.state;
+
+        const {
+            id,
+            completed,
+            favorite,
+            updateTask,
+        } = this.props;
+
+        updateTask({
+            id,
+            message,
+            completed,
+            favorite,
+        });
+
+        this.setState(({ inEditMode }) => ({
+            inEditMode: !inEditMode,
+        }));
     }
 
     render () {
-        const { inEditMode } = this.state;
+        const {
+            message,
+            inEditMode,
+        } = this.state;
         const {
             completed,
             favorite,
-            message,
         } = this.props;
 
         return (
@@ -111,9 +177,11 @@ export default class Task extends Component {
                     </div>
                     <input
                         disabled = { !inEditMode }
+                        maxLength = '50'
                         type = 'text'
                         value = { message }
                         onChange = { this._messageChangeHandler }
+                        onKeyPress = { this._finishChangesHandler }
                     />
                 </div>
                 <div className = { Styles.actions }>
