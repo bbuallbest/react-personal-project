@@ -7,8 +7,6 @@ import Remove from 'theme/assets/Remove';
 
 import Styles from './styles.m.css';
 
-import { ENTER, ESCAPE } from 'instruments/keyCodes';
-
 export default class Task extends Component {
     constructor (props) {
         super(props);
@@ -100,11 +98,13 @@ export default class Task extends Component {
         e.preventDefault();
 
         const { inEditMode } = this.state;
+
         if (inEditMode) {
             return;
         }
 
         const { id, removeTask } = this.props;
+
         removeTask(id);
     }
 

@@ -34,6 +34,7 @@ export default class Scheduler extends Component {
         }
 
         const { createTask } = this.props;
+
         createTask(message);
     }
 
@@ -98,7 +99,11 @@ export default class Scheduler extends Component {
     }
 
     render () {
-        const { searchWord } = this.props;
+        const {
+            searchWord,
+            allSelected,
+            selectAllTasks,
+        } = this.props;
         const { createTaskMessage } = this.state;
 
         return (
@@ -132,7 +137,10 @@ export default class Scheduler extends Component {
                     </section>
                     <footer>
                         <div>
-                            <Checkbox />
+                            <Checkbox
+                                checked = { allSelected }
+                                onClick = { selectAllTasks }
+                            />
                         </div>
                         <span>Complete all tasks</span>
                     </footer>

@@ -6,8 +6,8 @@ import { withSvg } from 'instruments/withSvg';
 
 class Checkbox extends Component {
     static defaultProps = {
-        color1:  '#3b8ef3',
-        color2:  '#fff',
+        color1: '#3b8ef3',
+        color2: '#fff',
     };
 
     render () {

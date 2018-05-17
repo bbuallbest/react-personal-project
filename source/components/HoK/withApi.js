@@ -12,15 +12,38 @@ const withApi = (Enhanced) =>
             this.removeTask = this._removeTask.bind(this);
             this.updateTask = this._updateTask.bind(this);
             this.filterTasks = this._filterTasks.bind(this);
+            this.selectAllTasks = this._selectAllTasks.bind(this);
         }
 
         state = {
-            tasks:      [],
-            searchWord: '',
+            allSelected: false,
+            tasks:       [],
+            searchWord:  '',
         }
 
         componentDidMount () {
             this._fetchTasks();
+        }
+
+        _selectAllTasks () {
+            this.setState(({ tasks, allSelected }) => {
+                if (allSelected) {
+                    return {};
+                }
+
+                tasks.forEach((task) => task.completed = true);
+
+                return {
+                    tasks:       this._reorderTasks(tasks),
+                    allSelected: true,
+                };
+            });
+        }
+
+        _isAllSelected (prevCompleted, nextCompleted) {
+            if (prevCompleted === nextCompleted) {
+                return prevCompleted;
+            }
         }
 
         async _fetchTasks () {
@@ -66,7 +89,7 @@ const withApi = (Enhanced) =>
                     const newTask = this._resolveTaskSearchState(payload.data, prevState.searchWord);
 
                     return {
-                        tasks: this._reorderTasks([newTask, ...prevState.tasks])
+                        tasks: this._reorderTasks([newTask, ...prevState.tasks]),
                     };
                 });
             } catch (e) {
@@ -113,6 +136,7 @@ const withApi = (Enhanced) =>
                 this.setState((prevState) => {
                     const toBeUpdated = prevState.tasks.find((task) => task.id === updatedTask.id);
                     const searchWord = prevState.searchWord;
+                    const allSelected = this._isAllSelected(toBeUpdated.completed, updatedTask.completed);
 
                     if (toBeUpdated) {
                         toBeUpdated.message = updatedTask.message;
@@ -124,6 +148,7 @@ const withApi = (Enhanced) =>
 
                     return {
                         tasks: this._reorderTasks([...prevState.tasks]),
+                        allSelected,
                     };
                 });
             } catch (e) {
@@ -166,7 +191,7 @@ const withApi = (Enhanced) =>
             const reordered = [...uncompletedFavorite, ...uncompletedUnfavorite, ...completedFavorite, ...completedUnfavorite];
 
             if (tasks.length !== reordered.length) {
-                console.log(`Ordered tasks list has wrong length. Expected ${tasks.length} but has ${result.length}`);
+                console.log(`Ordered tasks list has wrong length. Expected ${tasks.length} but has ${reordered.length}`);
 
                 return tasks;
             }
@@ -180,22 +205,26 @@ const withApi = (Enhanced) =>
 
         render () {
             const {
+                allSelected,
                 tasks,
                 searchWord,
             } = this.state;
 
             return (
                 <Enhanced
+                    allSelected = { allSelected }
                     createTask = { this.createTask }
                     filterTasks = { this.filterTasks }
                     removeTask = { this.removeTask }
                     searchWord = { searchWord }
+                    selectAllTasks = { this.selectAllTasks }
                     tasks = { tasks }
                     updateTask = { this.updateTask }
                 />
             );
         }
-    }
+    };
+
 export {
     withApi
 };
